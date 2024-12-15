@@ -44,12 +44,19 @@ def get_route_info(start_coords, end_coords, departure_time):
             duration_time = int(duration)
             route = routes[0]
             coordinates = []
+            hours = duration_time // 60
+            minutes = duration_time % 60
+            print(hours, minutes)
+            if hours > 0:
+                formatted_duration = f"{hours}시간 {minutes}분"
+            else:
+                formatted_duration = f"{minutes}분"
             for section in route['sections']:
                 for road in section['roads']:
                     vertexes = road['vertexes']
                     for i in range(0, len(vertexes), 2):
                         coordinates.append((vertexes[i + 1], vertexes[i]))  # (위도, 경도)
-            return duration_time, coordinates
+            return formatted_duration, coordinates
     return None, None
 def create_map(start_coords, end_coords, coodinates):
     m = folium.Map(location=start_coords, zoom_start=12)
@@ -84,7 +91,7 @@ def index():
                 map_html = create_map(start_coords, end_coords, coordinates)
                 return render_template(
                     "index.html",
-                    duration=f"{duration} 분",
+                    duration=f"{duration}",
                     start=start_address,
                     end=end_address,
                     departure_time=departure_time.strftime('%Y-%m-%d %H:%M:%S'),
